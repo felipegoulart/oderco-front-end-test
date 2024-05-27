@@ -1,4 +1,16 @@
 <script lang="ts" setup>
+import type { CardType } from '~/types/people';
+
+const {
+  height,
+  mass,
+  name,
+  url
+} = defineProps<CardType>()
+
+const id = ref<string>()
+
+id.value = url[url.length - 2]
 
 </script>
 
@@ -6,17 +18,17 @@
   <div class="app-card">
     <header>
       <h3 class="app-card__title">
-        Anakin
+        {{ name }}
       </h3>
     </header>
 
     <div>
-      <p class="app-card__text">Alguma coisa</p>
-      <p class="app-card__text">Alguma coisa 2</p>
+      <p class="app-card__text">Altura: {{ height }}cm</p>
+      <p class="app-card__text">Peso: {{ mass }}kg</p>
     </div>
 
     <footer>
-      <NuxtLink to="/" class="app-card__link">Ver todos os detalhes</NuxtLink>
+      <NuxtLink :to="`/personagem/${id}`" class="app-card__link">Ver todos os detalhes</NuxtLink>
     </footer>
   </div>
 </template>
