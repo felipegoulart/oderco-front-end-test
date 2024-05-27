@@ -81,39 +81,48 @@ setPeopleList(data.value?.results || [])
 
 <template>
   <div class="index-page">
-    <header class="index-page__header">
-      <h1 class="index-page__title">Todos os dados de Star Wars que você sempre quis:</h1>
-      <h2 class="index-page__subtitle2">Planetas, naves espaciais, veículos, pessoas, filmes e espécies</h2>
-    </header>
+    <div class="index-page__container">
+      <header class="index-page__header">
+        <h1 class="index-page__title">Todos os dados de Star Wars que você sempre quis:</h1>
+        <h2 class="index-page__subtitle2">Planetas, naves espaciais, veículos, pessoas, filmes e espécies</h2>
+      </header>
 
-    <SearchBar />
+      <SearchBar />
 
-    <div v-if="loading">
-      <p>Carregando dados...</p>
+      <div v-if="loading">
+        <p>Carregando dados...</p>
+      </div>
+
+      <div v-else-if="errors">
+        <h2 class="index-page__subtitle">Batemos a nave!</h2>
+        <h2 class="index-page__subtitle2">Trabalhando para resolver já estamos. Em alguns minutos voltar você deve.</h2>
+      </div>
+
+      <div v-else-if="isEmpty" class="index-page__empty">
+        <h2 class="index-page__subtitle">Não conseguimos encontrar nenhum personagem com o termo “{{ route.query.search
+          }}”!</h2>
+        <p class="index-page__subtitle2">Tente novamente com outro termo de pesquisa.</p>
+      </div>
+
+      <AppList v-else :list="list" />
+
+      <AppPagination v-if="listCount > 10" v-model="page" :count="listCount" />
     </div>
-
-    <div v-else-if="errors">
-      <h2 class="index-page__subtitle">Batemos a nave!</h2>
-      <h2 class="index-page__subtitle2">Trabalhando para resolver já estamos. Em alguns minutos voltar você deve.</h2>
-    </div>
-
-    <div v-else-if="isEmpty" class="index-page__empty">
-      <h2 class="index-page__subtitle">Não conseguimos encontrar nenhum personagem com o termo “{{ route.query.search
-        }}”!</h2>
-      <p class="index-page__subtitle2">Tente novamente com outro termo de pesquisa.</p>
-    </div>
-
-    <AppList v-else :list="list" />
-
-    <AppPagination v-if="listCount > 10" v-model="page" :count="listCount" />
   </div>
 </template>
 
 <style lang="scss" scoped>
 .index-page {
-  display: flex;
-  flex-direction: column;
-  gap: 72px;
+  padding: 72px 5vmin;
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+    gap: 72px;
+    margin: 0 auto;
+    max-width: 1090px;
+    width: 100%;
+  }
 
   &__header {
     text-align: center;

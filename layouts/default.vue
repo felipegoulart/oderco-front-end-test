@@ -1,7 +1,9 @@
 <template>
   <div class="app-container">
     <header class="header">
-      <NuxtImg src="/logo.png" width="148px" />
+      <NuxtLink to="/">
+        <NuxtImg src="/logo.png" width="148px" />
+      </NuxtLink>
     </header>
 
     <main class="content">
@@ -26,13 +28,6 @@
 .content {
   background-color: #000;
   color: #fff;
-  display: grid;
   flex: 1;
-  grid-template-columns: 1fr min(1090px, 100%) 1fr;
-  padding: 80px 5vmin;
-
-  &>* {
-    grid-column: 2;
-  }
 }
 </style>

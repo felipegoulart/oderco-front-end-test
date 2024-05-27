@@ -28,7 +28,7 @@ id.value = url.replace(/\D/g, '')
     </div>
 
     <footer>
-      <NuxtLink :to="`/personagem/${id}`" class="app-card__link">Ver todos os detalhes</NuxtLink>
+      <AppLink :path="`/character/${id}`" text="Ver todos os detalhes" />
     </footer>
   </div>
 </template>
@@ -58,11 +58,6 @@ id.value = url.replace(/\D/g, '')
 
   &__text {
     color: $secondary;
-  }
-
-  &__link {
-    color: $primary;
-    text-decoration: underline;
   }
 }
 </style>
