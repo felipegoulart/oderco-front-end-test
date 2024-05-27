@@ -40,8 +40,6 @@ async function getList(callback: () => Promise<DataType>) {
 }
 
 // Search
-const search = ref<string>()
-
 async function getListFromSearchQuery(value: string) {
   setPage(1)
   getList(() => $fetch<DataType>(`https://swapi.dev/api/people/?search=${value}`))
@@ -56,7 +54,7 @@ watch(
 const page = ref<number>(1)
 
 async function getListFromPageQuery(page: string) {
-  getList(() => $fetch<DataType>(`https://swapi.dev/api/people/?search=${search.value}&page=${page}`))
+  getList(() => $fetch<DataType>(`https://swapi.dev/api/people/?search=${route.query.search}&page=${page}`))
 }
 
 function setPage(value: number | LocationQueryValue) {
@@ -69,11 +67,10 @@ watch(
 )
 
 // Deve ser vazio caso há pesquisa e a lista seja vazia
-const isEmpty = computed(() => !loading.value && list.value.length === 0 && !!search.value)
+const isEmpty = computed(() => !loading.value && list.value.length === 0 && !!route.query.search)
 
 // Executa ao criar componente do lado do servidor
 
-search.value = route.query?.search as string ?? ''
 setPage(route.query?.page as LocationQueryValue)
 
 const { data } = await useFetch<DataType>(`https://swapi.dev/api/people/?search=${route.query.search}&page=${page.value}`)
@@ -89,7 +86,7 @@ setPeopleList(data.value?.results || [])
       <h2 class="index-page__subtitle2">Planetas, naves espaciais, veículos, pessoas, filmes e espécies</h2>
     </header>
 
-    <SearchBar v-model="search" />
+    <SearchBar />
 
     <div v-if="loading">
       <p>Carregando dados...</p>
@@ -101,7 +98,8 @@ setPeopleList(data.value?.results || [])
     </div>
 
     <div v-else-if="isEmpty" class="index-page__empty">
-      <h2 class="index-page__subtitle">Não conseguimos encontrar nenhum personagem com o termo “{{ search }}”!</h2>
+      <h2 class="index-page__subtitle">Não conseguimos encontrar nenhum personagem com o termo “{{ route.query.search
+        }}”!</h2>
       <p class="index-page__subtitle2">Tente novamente com outro termo de pesquisa.</p>
     </div>
 

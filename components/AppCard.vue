@@ -10,7 +10,7 @@ const {
 
 const id = ref<string>()
 
-id.value = url[url.length - 2]
+id.value = url.replace(/\D/g, '')
 
 </script>
 
@@ -22,7 +22,7 @@ id.value = url[url.length - 2]
       </h3>
     </header>
 
-    <div>
+    <div class="app-card__text-container">
       <p class="app-card__text">Altura: {{ height }}cm</p>
       <p class="app-card__text">Peso: {{ mass }}kg</p>
     </div>
@@ -38,6 +38,7 @@ id.value = url[url.length - 2]
   border: solid 1px #fff;
   border-radius: 8px;
   display: flex;
+  justify-content: space-between;
   flex-direction: column;
   gap: 8px;
   height: 182px;
@@ -46,7 +47,13 @@ id.value = url[url.length - 2]
 
   &__title {
     font-size: 1.5rem;
-    line-height: 18px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__text-container {
+    flex: 1;
   }
 
   &__text {
