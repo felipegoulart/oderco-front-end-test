@@ -13,7 +13,7 @@
 
 <style lang="scss" scoped>
 .error-page {
-  background-image: url('~/assets/images/error-wallpaper.jpeg');
+  background-image: url('~/public/images/error-wallpaper.jpeg');
   height: 100vh;
   display: flex;
   justify-content: center;

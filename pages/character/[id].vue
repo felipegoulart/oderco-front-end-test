@@ -190,7 +190,8 @@ setTab(route.query?.tab as string || 'details')
       </button>
 
       <div class="character-page__container">
-        <NuxtImg class="character-page__image" loading="lazy" src="/star-wars.png" height="320px" width="162px" />
+        <NuxtImg class="character-page__image" loading="lazy" src="/images/star-wars.png" height="320px"
+          width="162px" />
 
         <div class="character-page__container-details">
           <Transition mode="out-in">
@@ -210,7 +211,7 @@ setTab(route.query?.tab as string || 'details')
 
 <style lang="scss" scoped>
 .character-page {
-  background-image: url("~/assets/images/background.png");
+  background-image: url("~/public/images/background.png");
   display: flex;
   flex-direction: column;
   gap: 72px;

@@ -2,7 +2,7 @@
   <div class="app-container">
     <header class="header">
       <NuxtLink to="/">
-        <NuxtImg src="/logo.png" width="148px" />
+        <NuxtImg src="/images/logo.png" width="148px" />
       </NuxtLink>
     </header>
 
