@@ -12,15 +12,11 @@ defineProps<{
 
 <template>
   <div class="character-details">
-    <p class="character-details__label">Altura <span class="character-details__value">{{ details.height }}cm</span></p>
-    <p class="character-details__label">Peso <span class="character-details__value">{{ details.mass }}kg</span></p>
-    <p class="character-details__label">Cor do cabelo <span class="character-details__value">{{ details.hair_color
-        }}</span></p>
-    <p class="character-details__label">Cor de pele <span class="character-details__value">{{ details.skin_color
-        }}</span></p>
-    <p class="character-details__label">Cor dos olhos <span class="character-details__value">{{ details.eye_color
-        }}</span>
-    </p>
+    <AppInfo label="Altura" :value="`${details.height}cm`" />
+    <AppInfo label="Peso" :value="`${details.mass}kg`" />
+    <AppInfo label="Cor do cabelo" :value="details.hair_color" />
+    <AppInfo label="Cor de pele" :value="details.skin_color" />
+    <AppInfo label="Cor dos olhos" :value="details.eye_color" />
   </div>
 </template>
 
@@ -30,15 +26,5 @@ defineProps<{
   height: 100%;
   flex-direction: column;
   justify-content: space-between;
-
-  &__label {
-    color: $primary;
-    font-size: 1.5rem;
-  }
-
-  &__value {
-    color: white;
-    font-size: 2rem;
-  }
 }
 </style>

@@ -7,19 +7,20 @@ import {
   CharacterVehicles,
 } from '#components'
 import { ArrowRight, ArrowLeft } from 'lucide-vue-next'
+import type { DefineComponent } from 'vue';
 
 import type { PeopleType } from '~/types/people'
 
 const route = useRoute()
 const router = useRouter()
 
+const { data } = await useFetch<PeopleType>(`https://swapi.dev/api/people/${route.params.id}`)
+
 const DEFAULT_TAB = 'details'
 const currentTab = ref<string>(DEFAULT_TAB)
-const currentTabIndex = computed(() => {
-  const tabsValue = tabs.map(({ value }) => value)
 
-  return tabsValue.findIndex(value => value === currentTab.value)
-})
+
+
 
 const tabs = [
   {
@@ -44,16 +45,47 @@ const tabs = [
   },
 ]
 
-function goToNextTab() {
-  const nextTabIndex = currentTabIndex.value === (tabs.length - 1) ? 0 : currentTabIndex.value + 1
+const avaliableTabs = computed(() => {
+  const { species = [], starships = [], vehicles = [] } = data.value!
+  const tabsToFilter = ['specie', 'vehicles', 'starships']
 
-  setTab(tabs[nextTabIndex].value)
+  interface HasData {
+    specie: boolean
+    starships: boolean
+    vehicles: boolean
+  }
+
+  const hasData: HasData = {
+    specie: !!species?.length,
+    starships: !!starships?.length,
+    vehicles: !!vehicles?.length
+  }
+
+  return tabs.filter(({ value }) => {
+    // Caso não exista na lista de abas a serem filtradas então deve sempre existir.
+    if (!tabsToFilter.includes(value)) return true
+
+    return hasData[value as keyof HasData]
+  })
+})
+
+const currentTabIndex = computed(() => {
+  const tabsValue = avaliableTabs.value.map(({ value }) => value)
+
+  return tabsValue.findIndex(value => value === currentTab.value)
+})
+
+function goToNextTab() {
+  const nextTabIndex = currentTabIndex.value === (avaliableTabs.value.length - 1) ? 0 : currentTabIndex.value + 1
+
+  console.log({ avaliableTabs, currentTabIndex, nextTabIndex })
+  setTab(avaliableTabs.value[nextTabIndex].value)
 }
 
 function goToPreviousTab() {
-  const previousTabIndex = currentTabIndex.value === 0 ? tabs.length - 1 : currentTabIndex.value - 1
+  const previousTabIndex = currentTabIndex.value === 0 ? avaliableTabs.value.length - 1 : currentTabIndex.value - 1
 
-  setTab(tabs[previousTabIndex].value)
+  setTab(avaliableTabs.value[previousTabIndex].value)
 }
 
 function getActivateTabClass(tab: string) {
@@ -78,13 +110,23 @@ function setTab(tab: string) {
   })
 }
 
+watch(() => route.query.tab, (value) => {
+  router.replace({ query: { tab: value } })
+})
+
 const component = computed(() => {
+  interface ComponentProps {
+    is: DefineComponent
+    /* eslint-disable-next-line */
+    props: any
+  }
+
   interface Components {
-    details: string
-    films: string
-    specie: string
-    vehicles: string
-    starships: string
+    details: ComponentProps
+    films: ComponentProps
+    specie: ComponentProps
+    starships: ComponentProps
+    vehicles: ComponentProps
   }
 
   const components = {
@@ -106,22 +148,23 @@ const component = computed(() => {
     },
     specie: {
       is: CharacterSpecie,
-      props: { data }
+      props: {
+        specieUrl: data.value?.species[0]
+      }
     },
     vehicles: {
       is: CharacterVehicles,
-      props: { data }
+      props: { vehicles: data.value?.vehicles }
     },
     starships: {
       is: CharacterStarships,
-      props: { data }
+      props: { starships: data.value?.starships }
     },
   }
 
   return components[currentTab.value as keyof Components]
 })
 
-const { data } = await useFetch<PeopleType>(`https://swapi.dev/api/people/${route.params.id}`)
 setTab(route.query?.tab as string || 'details')
 </script>
 
@@ -134,8 +177,8 @@ setTab(route.query?.tab as string || 'details')
 
     <nav>
       <ul class="character-page__tab-list">
-        <li v-for="tab of tabs" :key="tab.value" :class=getActivateTabClass(tab.value) class="character-page__tab"
-          @click="setTab(tab.value)">
+        <li v-for="tab of avaliableTabs" :key="tab.value" :class=getActivateTabClass(tab.value)
+          class="character-page__tab" @click="setTab(tab.value)">
           {{ tab.label }}
         </li>
       </ul>
@@ -150,13 +193,9 @@ setTab(route.query?.tab as string || 'details')
         <NuxtImg class="character-page__image" loading="lazy" src="/star-wars.png" height="320px" width="162px" />
 
         <div class="character-page__container-details">
-          <ClientOnly fallback-tag="span" fallback="Carregando dados...">
-            <Transition mode="out-in">
-              <KeepAlive>
-                <component :is='component.is' v-bind="component.props" />
-              </KeepAlive>
-            </Transition>
-          </ClientOnly>
+          <Transition mode="out-in">
+            <component :is='component.is' v-bind="component.props" />
+          </Transition>
         </div>
       </div>
 
